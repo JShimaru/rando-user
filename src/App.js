@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
+import Header from './components/Header';
+import UserSummary from './components/UserSummary';
+import fetchUser from './services/rando_user';
 
-function App() {
+
+function App(){
+
+    const [flag, setFlag] = useState(false)
+
+    const [currentUser, setCurrentUser] = useState([])
+
+    useEffect(()=> {      
+    refreshUser()
+   },[])
+
+    async function refreshUser(){
+       try {
+        const response = await fetchUser()
+        setCurrentUser(response)
+        setFlag(true)
+       }catch (error) {
+        setFlag(false)
+          console.error(error)      
+       }
+     }
+
+   console.log(currentUser)
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <button onClick={refreshUser}>Refresh Users</button>
+      <UserSummary randomUser={currentUser} flag={flag} />
     </div>
   );
 }
